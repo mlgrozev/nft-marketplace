@@ -12,16 +12,16 @@ import "hardhat/console.sol";
 contract Collection is NFT , Ownable{
 
    // Mapping from owner to list of owned token IDs
-    mapping(address => mapping(uint256 => uint256)) private _ownedTokens;
+    // mapping(address => mapping(uint256 => uint256)) private _ownedTokens;
 
     // // Mapping from token ID to index of the owner tokens list
-    mapping(uint256 => uint256) private _ownedTokensIndex;
+    // mapping(uint256 => uint256) private _ownedTokensIndex;
 
     // // Array with all token ids, used for enumeration
-    uint256[] private _allTokens;
+    // uint256[] private _allTokens;
 
     // // Mapping from token id to position in the allTokens array
-    mapping(uint256 => uint256) private _allTokensIndex;
+    // mapping(uint256 => uint256) private _allTokensIndex;
 
 
     constructor(address marketplaceAddress,
@@ -32,7 +32,7 @@ contract Collection is NFT , Ownable{
     }
 
     function createToken(string memory tokenURI) public override onlyOwner returns (uint) {  
-    //    _ownedTokens[_msgSender()]
+    //    _ownedTokens[_msgSender()] = ;
        return super.createToken(tokenURI);
     }
 

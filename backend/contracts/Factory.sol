@@ -10,7 +10,9 @@ contract Factory is Context {
 
     address public market;
     
+    //Mapping of own collections
     mapping(address => mapping(uint256 => address)) public ownerIdToCollection;
+    //Number of collection
     mapping(address => uint256) public collections;
 
     constructor(address _market){

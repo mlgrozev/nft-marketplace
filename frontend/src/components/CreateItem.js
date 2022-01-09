@@ -89,12 +89,6 @@ export default function CreateItem() {
       contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
       let listingPrice = await contract.getListingPrice();
       listingPrice = listingPrice.toString();
-      console.log('nftaddress', nftaddress);
-      console.log('tokenId', tokenId);
-      console.log('price', price);
-      console.log('tripType', tripType);
-      console.log('endingUnix', endingUnix);
-      console.log('listingPrice', listingPrice);
       transaction = await contract.createMarketItem(
         nftaddress,
         tokenId,
@@ -106,7 +100,7 @@ export default function CreateItem() {
         }
       );
       await transaction.wait();
-      navigate("/creator-dashboard");
+      navigate("/collection-detail/" + nftaddress);
     } catch (error) {
       setError(`${error.message}`);
       console.log("error", error);

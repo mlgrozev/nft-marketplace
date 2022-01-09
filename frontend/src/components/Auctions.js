@@ -7,7 +7,7 @@ import Market from "./../artifacts/contracts/Market.sol/Market.json";
 import NFT from "./../artifacts/contracts/NFT.sol/NFT.json";
 import Factory from "./../artifacts/contracts/Factory.sol/Factory.json";
 import Collection from "./../artifacts/contracts/Collection.sol/Collection.json";
-let rpcEndpoint = "https://polygon-mumbai.infura.io/v3/89aa0cf029e948ee883b0bf906f2f3df"
+let rpcEndpoint = "http://localhost:8545"
 
 
 
@@ -19,16 +19,18 @@ export default function Auctions() {
   }, [])
   async function loadNFTs() {    
     const provider = new ethers.providers.JsonRpcProvider(rpcEndpoint)
-    const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
     const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, provider)
+    //TODO add contract of the nft
     const data = await marketContract.fetchMarketItems()
     
     let items = await Promise.all(data.map(async i => {
+    const tokenContract = new ethers.Contract(i.nftContract, NFT.abi, provider)
     const tokenUri = await tokenContract.tokenURI(i.tokenId)
     const meta = await axios.get(tokenUri)
     let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
     let item = {
       price,
+      nftContract: i.nftContract,
       itemId: i.itemId.toNumber(),
       seller: i.seller,
       owner: i.owner,
@@ -52,7 +54,8 @@ export default function Auctions() {
     const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
 
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
-    const transaction = await contract.createMarketSale(nftaddress, nft.itemId, {
+    console.log('nft',nft);
+    const transaction = await contract.bid(nft.nftContract, nft.itemId, {
       value: price
     })
     await transaction.wait()

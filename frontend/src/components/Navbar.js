@@ -13,7 +13,7 @@ const Navbar = () => {
           alignItems: "center",
         }}
       >
-        <div style={{ display: "flex", width: "50%" }} className="linkbar">
+        <div style={{ display: "flex", width: "70%" }} className="linkbar">
           <NavLink
             className={({ isActive }) => (isActive ? "active" : "inactive")}
             to="/"
@@ -23,31 +23,27 @@ const Navbar = () => {
 
           <NavLink
             className={({ isActive }) => (isActive ? "active" : "inactive")}
+            to="/create-collection"
+          >
+            <a>Create Collection</a>
+          </NavLink>
+          
+          <NavLink to="/creator-dashboard">
+            <a>Created Assets</a>
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) => (isActive ? "active" : "inactive")}
             to="/my-assets"
           >
             <a>My Assets</a>
           </NavLink>
 
-          <div class="dropdown">
-            <span>Create</span>
-            <div class="dropdown-content">
-              <NavLink
-                className={({ isActive }) => (isActive ? "active" : "inactive")}
-                to="/create-item"
-              >
-                NFTs
-              </NavLink>
-              <NavLink
-                className={({ isActive }) => (isActive ? "active" : "inactive")}
-                to="/create-collection"
-              >
-                Collections
-              </NavLink>
-            </div>
-          </div>
-
-          <NavLink to="/creator-dashboard">
-            <a>Created Assets</a>
+          <NavLink
+            className={({ isActive }) => (isActive ? "active" : "inactive")}
+            to="/address-assets"
+          >
+            <a>Address Assets</a>
           </NavLink>
           <NavLink
             className={({ isActive }) => (isActive ? "active" : "inactive")}

@@ -30,6 +30,8 @@ function CollectionDetail() {
   const [collections, setCollections] = useState([]);
   const [modalstate, setModalstate] = useState(false);
   const [nfts, setNfts] = useState([]);
+  const [address, setAddress] = useState();
+  const [owner, setOwner] = useState();
   const [sold, setSold] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
   const [collectionloadingState, setCollectionLoadingState] =
@@ -90,29 +92,21 @@ function CollectionDetail() {
 
     try {
       /* next, create the item */
-      let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
+      let contract = new ethers.Contract(id, Collection.abi, signer);
       let transaction = await contract.createToken(url);
       let tx = await transaction.wait();
       let event = tx.events[0];
       let value = event.args[2];
       let tokenId = value.toNumber();
-     
+
       const price = ethers.utils.parseUnits(formInput.price, "ether");
 
       /* then list the item for sale on the marketplace */
       contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
       let listingPrice = await contract.getListingPrice();
-      console.log('listingPriceORG', listingPrice)
       listingPrice = listingPrice.toString();
-      console.log('listingPrice', listingPrice)
-      console.log('nftaddress', nftaddress);
-      console.log('tokenId', tokenId);
-      console.log('price', price);
-      console.log('tripType', tripType);
-      console.log('endingUnix', endingUnix);
-      console.log('listingPrice', listingPrice);
       transaction = await contract.createMarketItem(
-        nftaddress,
+        id,
         tokenId,
         price,
         tripType,
@@ -123,6 +117,7 @@ function CollectionDetail() {
       );
       await transaction.wait();
       setModalstate(false);
+      window.location.reload(false);
     } catch (error) {
       setError(`${error.message}`);
       console.log("error", error);
@@ -139,7 +134,7 @@ function CollectionDetail() {
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();
       const address = signer.provider.provider.selectedAddress;
-      // console.log(signer.provider.provider.selectedAddress)
+      setAddress(address.toLowerCase());
       const CollectionContract = new ethers.Contract(
         id,
         Collection.abi,
@@ -147,6 +142,8 @@ function CollectionDetail() {
       );
       const name = await CollectionContract.name();
       const symbol = await CollectionContract.symbol();
+      const owner = await CollectionContract.owner();
+      setOwner(owner.toLowerCase());
       let collectionObj = {
         name,
         symbol,
@@ -170,29 +167,23 @@ function CollectionDetail() {
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();
       const address = signer.provider.provider.selectedAddress;
-      // console.log(signer.provider.provider.selectedAddress)
-      const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
       const CollectionContract = new ethers.Contract(
-        collectionaddress,
+        id,
         Collection.abi,
         signer
       );
-      let ids = await CollectionContract.balanceOf(address);
-      //  ids =  ids.toNumber()
-      //  ids = ids.toString()
-      console.log("id", ids.toNumber());
+      let ids = await CollectionContract.totalSupply();
       let items = [];
-      for (let index = 1; index <= ids.toNumber(); index++) {
+      for (let index = 0; index <= ids; index++) {
         try {
-          console.log("tokurirann");
-          const tokenUri = await CollectionContract.tokenURI(index.toString());
-          console.log("tokuri", tokenUri);
+          const tokenUri = await CollectionContract.tokenURI(index);
           const meta = await axios.get(tokenUri);
-          console.log("meta", meta);
           let item = {
             // price,
             tokenId: index.toString(),
             image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
           };
           items.push(item);
         } catch (error) {
@@ -211,28 +202,45 @@ function CollectionDetail() {
       className="flex justify-center "
       style={{ flexDirection: "column", width: "100%" }}
     >
-      <p className="py-1 px-10 text-3xl">{collections.name}</p>
-      <p className="py-1 px-10 text-3xl">{collections.symbol}</p>
-      <button
-        className="py-5 px-10 text-1xl bg-red-300 text-white text-center w-40"
-        style={{ margin: "0 auto" }}
-        onClick={() => {
-          setModalstate(true);
-        }}
-      >
-        Mint NFTs
-      </button>
+      <p className="py-1 px-10 text-3xl text-center text-5xl font-bold bg-white">
+        <h1 class="font-bold bg-white">{collections.name}</h1>
+        </p>
+      <p className="py-1 px-10 text-3xl text-center text-5xl font-bold bg-white">
+        <h2 class="">{collections.symbol}</h2>
+      </p>
+      {owner == address && (
+        <button
+          className="py-5 px-10 text-1xl bg-red-300 text-white text-center w-40"
+          style={{ margin: "0 auto" }}
+          onClick={() => {
+            setModalstate(true);
+          }}
+        >
+          Mint NFTs
+        </button>
+      )}
       <div className="flex justify-center">
         <div className="p-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
             {nfts.map((nft, i) => (
               <div key={i} className="border shadow rounded-xl overflow-hidden">
                 <img src={nft.image} className="rounded" />
-                <div className="p-4 bg-black">
+                <div className="p-4">
+                  <p
+                    style={{ height: "64px" }}
+                    className="text-2xl font-semibold"
+                  >
+                    {nft.name}
+                  </p>
+                  <div style={{ height: "70px", overflow: "hidden" }}>
+                    <p className="text-gray-400">{nft.description}</p>
+                  </div>
+                </div>
+                {/* <div className="p-4 bg-black">
                   <p className="text-2xl font-bold text-white">
                     Price - {nft.price} Eth
                   </p>
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
