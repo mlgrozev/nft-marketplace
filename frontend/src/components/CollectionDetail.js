@@ -210,7 +210,7 @@ function CollectionDetail() {
       </p>
       {owner == address && (
         <button
-          className="py-5 px-10 text-1xl bg-red-300 text-white text-center w-40"
+          className="py-5 px-10 text-1xl bg-pink-300 text-white text-center w-40 hover:bg-pink-700"
           style={{ margin: "0 auto" }}
           onClick={() => {
             setModalstate(true);
@@ -333,7 +333,7 @@ function CollectionDetail() {
 
               <button
                 onClick={create}
-                className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg"
+                className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg hover:bg-pink-700"
               >
                 Create Digital Asset
               </button>

@@ -65,7 +65,7 @@ export default function Collections () {
               />
             <button
               onClick={createCollection}
-              className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg"
+              className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg hover:bg-pink-700"
             >
               Create NFT Collection
             </button>
